@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ElderEase Helper</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-group">
+        <div class="logo">E</div>
+        <div>
+          <h2>ElderEase</h2>
+          <p>Browser Helper</p>
+        </div>
+      </div>
+      <select id="langSelect" class="lang-select">
+        <option value="mr">मराठी</option>
+        <option value="hi">हिंदी</option>
+        <option value="en">English</option>
+      </select>
+    </header>
+
+    <!-- Main Large Buttons -->
+    <div class="actions-grid">
+      <button id="btnExplainPage" class="action-btn btn-explain">
+        <span class="icon">🔍</span>
+        <span class="btn-text">Explain This Page</span>
+        <span class="subtext">हे पान समजावून सांगा</span>
+      </button>
+
+      <button id="btnVoiceHelp" class="action-btn btn-voice">
+        <span class="icon">🎤</span>
+        <span class="btn-text">Talk to ElderEase</span>
+        <span class="subtext">माइकने प्रश्न विचारा</span>
+      </button>
+    </div>
+
+    <!-- Live Status / Result Box -->
+    <div id="resultBox" class="result-box" style="display: none;">
+      <div class="result-header">
+        <h3 id="resultTitle">मार्गदर्शन (Guidance)</h3>
+        <button id="btnSpeakResult" class="speak-btn">🔊 ऐका (Listen)</button>
+      </div>
+      <div id="resultContent" class="result-content"></div>
+      <div id="safetyWarning" class="safety-warning" style="display: none;"></div>
+    </div>
+
+    <!-- Quick Link Back to Primary Web App -->
+    <footer class="footer">
+      <a id="linkOpenWebApp" href="http://localhost:3000" target="_blank" class="web-app-link">
+        🌐 Open Main ElderEase Web App
+      </a>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

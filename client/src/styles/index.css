@@ -1,0 +1,279 @@
+/* ElderEase — Accessible, Senior-First Design System */
+
+:root,
+body.theme-light {
+  /* Default Font Scale: Large for elderly readability */
+  --font-base: 22px;
+  --font-sm: 18px;
+  --font-md: 22px;
+  --font-lg: 26px;
+  --font-xl: 32px;
+  --font-2xl: 40px;
+
+  /* Color Palette - Warm, Reassuring, High Contrast Light Theme */
+  --bg-primary: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-subtle: #f1f5f9;
+  --bg-interactive: #e2e8f0;
+
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+
+  --brand-primary: #0f766e; /* Deep calming teal */
+  --brand-primary-hover: #115e59;
+  --brand-surface: #ccfbf1;
+  --brand-text: #134e4a;
+
+  --accent-amber: #b45309;
+  --accent-amber-bg: #fef3c7;
+
+  --status-green: #15803d;
+  --status-green-bg: #dcfce7;
+  --status-green-text: #14532d;
+
+  --status-red: #b91c1c;
+  --status-red-bg: #fee2e2;
+  --status-red-text: #7f1d1d;
+
+  --border-light: #cbd5e1;
+  --border-strong: #64748b;
+
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
+
+  --touch-target: 68px;
+}
+
+/* Dark Mode (High-contrast, eye-friendly, deep soothing dark) */
+body.theme-dark,
+html[data-theme='dark'] body {
+  --bg-primary: #0f172a;
+  --bg-surface: #1e293b;
+  --bg-card: #1e293b;
+  --bg-subtle: #334155;
+  --bg-interactive: #475569;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #e2e8f0;
+  --text-muted: #94a3b8;
+
+  --brand-primary: #14b8a6;
+  --brand-primary-hover: #2dd4bf;
+  --brand-surface: #134e4a;
+  --brand-text: #f0fdfa;
+
+  --accent-amber: #f59e0b;
+  --accent-amber-bg: #78350f;
+
+  --status-green: #4ade80;
+  --status-green-bg: #064e3b;
+  --status-green-text: #dcfce7;
+
+  --status-red: #f87171;
+  --status-red-bg: #7f1d1d;
+  --status-red-text: #fee2e2;
+
+  --border-light: #334155;
+  --border-strong: #94a3b8;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* Font Size Scales */
+body.font-normal {
+  --font-base: 18px;
+  --font-sm: 16px;
+  --font-md: 20px;
+  --font-lg: 24px;
+  --font-xl: 28px;
+  --font-2xl: 34px;
+  --touch-target: 56px;
+}
+
+body.font-large {
+  --font-base: 22px;
+  --font-sm: 19px;
+  --font-md: 24px;
+  --font-lg: 28px;
+  --font-xl: 34px;
+  --font-2xl: 42px;
+  --touch-target: 68px;
+}
+
+body.font-xlarge {
+  --font-base: 26px;
+  --font-sm: 22px;
+  --font-md: 28px;
+  --font-lg: 34px;
+  --font-xl: 40px;
+  --font-2xl: 50px;
+  --touch-target: 78px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+body {
+  font-family: 'Lexend', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: var(--font-base);
+  line-height: 1.5;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  letter-spacing: -0.01em;
+  text-rendering: optimizeLegibility;
+}
+
+/* Accessible interactive elements */
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  user-select: none;
+}
+
+/* High visibility focus states for elderly keyboard / assistive navigation */
+*:focus-visible {
+  outline: 4px solid #f59e0b !important;
+  outline-offset: 3px !important;
+}
+
+/* Container Utility */
+.app-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Big Senior Action Card Grid */
+.senior-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* Base Senior Action Button */
+.senior-action-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  min-height: var(--touch-target);
+  padding: 1.75rem 1.25rem;
+  border-radius: var(--radius-lg);
+  font-weight: 700;
+  font-size: var(--font-lg);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 3px solid transparent;
+  text-align: center;
+  text-decoration: none;
+}
+
+.senior-action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.senior-action-button:active {
+  transform: translateY(1px);
+}
+
+/* Large Hero Talk Button */
+.btn-talk-hero {
+  background: linear-gradient(135deg, #0d9488, #0f766e);
+  color: #ffffff;
+  border-color: #14b8a6;
+  padding: 2.25rem 1.75rem;
+  font-size: var(--font-xl);
+  font-weight: 800;
+  border-radius: var(--radius-lg);
+}
+
+body.theme-dark .btn-talk-hero {
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+  color: #0f172a;
+  border-color: #5eead4;
+}
+
+/* Action Cards */
+.card-do-something {
+  background-color: var(--bg-surface);
+  border: 3px solid var(--border-light);
+  color: var(--text-primary);
+}
+
+.card-do-something:hover {
+  border-color: var(--brand-primary);
+}
+
+.card-family {
+  background-color: var(--bg-surface);
+  border: 3px solid var(--border-light);
+  color: var(--text-primary);
+}
+
+.card-family:hover {
+  border-color: #f59e0b;
+}
+
+.card-settings {
+  background-color: var(--bg-surface);
+  border: 3px solid var(--border-light);
+  color: var(--text-primary);
+}
+
+.card-settings:hover {
+  border-color: var(--text-secondary);
+}
+
+/* Sound wave animation for active listening/speaking */
+@keyframes soundwave {
+  0%, 100% { height: 16px; }
+  50% { height: 48px; }
+}
+
+.audio-bar {
+  width: 8px;
+  background-color: var(--brand-primary);
+  border-radius: 4px;
+  animation: soundwave 1s ease-in-out infinite;
+}
+.audio-bar:nth-child(2) { animation-delay: 0.15s; }
+.audio-bar:nth-child(3) { animation-delay: 0.3s; }
+.audio-bar:nth-child(4) { animation-delay: 0.45s; }
+.audio-bar:nth-child(5) { animation-delay: 0.6s; }
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .app-container {
+    padding: 1rem;
+  }
+  .senior-card-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}

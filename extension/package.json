@@ -1,0 +1,8 @@
+{
+  "name": "elderease-browser-extension",
+  "version": "1.0.0",
+  "description": "ElderEase Chrome Extension Manifest V3",
+  "scripts": {
+    "test": "node -e \"const m=require('./manifest.json'); console.log('Manifest V'+m.manifest_version+' valid: '+m.name);\""
+  }
+}

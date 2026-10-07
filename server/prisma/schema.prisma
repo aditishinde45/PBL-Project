@@ -1,0 +1,367 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String            @id @default(uuid())
+  email            String?           @unique
+  phone            String?           @unique
+  name             String
+  passwordHash     String
+  role             String            @default("SENIOR") // SENIOR, CAREGIVER, ADMIN
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  seniorProfile    SeniorProfile?
+  caregiverProfile CaregiverProfile?
+  preference       Preference?
+  notifications    Notification[]
+  auditLogs        AuditLog[]
+  securityEvents   SecurityEvent[]
+
+  @@index([role])
+}
+
+model SeniorProfile {
+  id                    String                @id @default(uuid())
+  userId                String                @unique
+  user                  User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  inviteCode            String                @unique
+  birthYear             Int?
+  medicalNotes          String?
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+
+  connections           CaregiverConnection[]
+  medicines             Medicine[]
+  appointments          Appointment[]
+  checkIns              CheckIn[]
+  helpRequests          HelpRequest[]
+  emergencyEvents       EmergencyEvent[]
+  familyTasks           FamilyTask[]
+  guidedSessions        GuidedSession[]
+  conversations         Conversation[]
+  browserSessions       BrowserSession[]
+
+  @@index([inviteCode])
+}
+
+model CaregiverProfile {
+  id                   String                @id @default(uuid())
+  userId               String                @unique
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  relationshipToSenior String?               // Daughter, Son, Spouse, Nurse, etc.
+  alertPreferences     String?               // JSON string of notification channels
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+
+  connections          CaregiverConnection[]
+  familyTasks          FamilyTask[]
+}
+
+model CaregiverConnection {
+  id          String           @id @default(uuid())
+  seniorId    String
+  caregiverId String
+  status      String           @default("APPROVED") // PENDING, APPROVED, REVOKED
+  permissions String?          // Full, ViewOnly
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  senior      SeniorProfile    @relation(fields: [seniorId], references: [id], onDelete: Cascade)
+  caregiver   CaregiverProfile @relation(fields: [caregiverId], references: [id], onDelete: Cascade)
+
+  @@unique([seniorId, caregiverId])
+  @@index([seniorId])
+  @@index([caregiverId])
+}
+
+model Preference {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  language     String   @default("mr") // mr (Marathi), hi (Hindi), en (English)
+  fontSize     String   @default("LARGE") // NORMAL, LARGE, EXTRA_LARGE
+  voiceSpeed   String   @default("SLOW") // SLOW, NORMAL
+  theme        String   @default("light") // light, dark
+  highContrast Boolean  @default(false)
+  ttsEnabled   Boolean  @default(true)
+  updatedAt    DateTime @updatedAt
+}
+
+model Task {
+  id          String          @id @default(uuid())
+  slug        String          @unique
+  title       String
+  titleEn     String?
+  titleHi     String?
+  titleMr     String?
+  category    String          @default("Communication") // Communication, Entertainment, General
+  description String
+  descEn      String?
+  descHi      String?
+  descMr      String?
+  difficulty  String          @default("EASY") // EASY, MEDIUM, HARD
+  isPublished Boolean         @default(true)
+  icon        String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  steps       TaskStep[]
+  sessions    GuidedSession[]
+
+  @@index([category])
+  @@index([isPublished])
+  @@index([slug])
+}
+
+model TaskStep {
+  id             String   @id @default(uuid())
+  taskId         String
+  task           Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  stepNumber     Int
+  title          String
+  titleEn        String?
+  titleHi        String?
+  titleMr        String?
+  instructionEn  String
+  instructionHi  String
+  instructionMr  String
+  helpEn         String?
+  helpHi         String?
+  helpMr         String?
+  expectedAction String?
+  mediaUrl       String?
+
+  @@index([taskId, stepNumber])
+}
+
+model GuidedSession {
+  id               String      @id @default(uuid())
+  seniorId         String
+  taskId           String
+  currentStepIndex Int         @default(0)
+  status           String      @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED, ABANDONED
+  lastActiveAt     DateTime    @default(now())
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  senior           SeniorProfile @relation(fields: [seniorId], references: [id], onDelete: Cascade)
+  task             Task          @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  feedbacks        Feedback[]
+
+  @@index([seniorId, status])
+}
+
+model Medicine {
+  id           String             @id @default(uuid())
+  seniorId     String
+  senior       SeniorProfile      @relation(fields: [seniorId], references: [id], onDelete: Cascade)
+  name         String
+  dosage       String
+  instructions String?
+  startDate    DateTime           @default(now())
+  endDate      DateTime?
+  active       Boolean            @default(true)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  schedules    MedicineSchedule[]
+
+  @@index([seniorId, active])
+}
+
+model MedicineSchedule {
+  id            String                 @id @default(uuid())
+  medicineId    String
+  medicine      Medicine               @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+  time          String                 // "08:00", "13:00", "20:00"
+  frequency     String                 @default("DAILY") // DAILY, WEEKLY
+  daysOfWeek    String?                // Comma separated e.g. "MON,TUE,WED"
+  createdAt     DateTime               @default(now())
+
+  confirmations MedicineConfirmation[]
+
+  @@index([medicineId])
+}
+
+model MedicineConfirmation {
+  id           String           @id @default(uuid())
+  scheduleId   String
+  schedule     MedicineSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduledFor DateTime
+  status       String           @default("PENDING") // PENDING, TAKEN, DELAYED, MISSED
+  confirmedAt  DateTime?
+  notes        String?
+  createdAt    DateTime         @default(now())
+
+  @@index([scheduleId, scheduledFor])
+}
+
+model Appointment {
+  id                    String        @id @default(uuid())
+  seniorId              String
+  senior                SeniorProfile @relation(fields: [seniorId], references: [id], onDelete: Cascade)
+  doctorName            String
+  specialty             String?
+  dateTime              DateTime
+  location              String?
+  reminderMinutesBefore Int           @default(120)
+  notes                 String?
+  status                String        @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  @@index([seniorId, dateTime])
+}
+
+model CheckIn {
+  id          String        @id @default(uuid())
+  seniorId    String
+  senior      SeniorProfile @relation(fields: [seniorId], references: [id], onDelete: Cascade)
+  date        String        // "YYYY-MM-DD"
+  status      String        @default("PENDING") // PENDING, OKAY, HELP_NEEDED, MISSED
+  respondedAt DateTime?
+  notes       String?
+  createdAt   DateTime      @default(now())
+
+  @@unique([seniorId, date])
+  @@index([seniorId, date])
+}
+
+model HelpRequest {
+  id         String        @id @default(uuid())
+  seniorId   String
+  senior     SeniorProfile @relation(fields: [seniorId], references: [id], onDelete: Cascade)
+  type       String        @default("GENERAL_ASSISTANCE") // FAMILY_CALL, GENERAL_ASSISTANCE
+  status     String        @default("OPEN") // OPEN, ACKNOWLEDGED, RESOLVED
+  message    String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@index([seniorId, status])
+}
+
+model EmergencyEvent {
+  id                String        @id @default(uuid())
+  seniorId          String
+  senior            SeniorProfile @relation(fields: [seniorId], references: [id], onDelete: Cascade)
+  latitude          Float?
+  longitude         Float?
+  resolved          Boolean       @default(false)
+  audioAlertPlayed  Boolean       @default(false)
+  notes             String?
+  createdAt         DateTime      @default(now())
+  resolvedAt        DateTime?
+
+  @@index([seniorId, resolved])
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  recipientId String
+  recipient   User     @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  title       String
+  message     String
+  type        String   // MISSED_MEDICINE, CHECK_IN, HELP_REQUEST, EMERGENCY, APPOINTMENT, SYSTEM
+  isRead      Boolean  @default(false)
+  entityId    String?
+  createdAt   DateTime @default(now())
+
+  @@index([recipientId, isRead])
+}
+
+model FamilyTask {
+  id          String           @id @default(uuid())
+  seniorId    String
+  caregiverId String
+  senior      SeniorProfile    @relation(fields: [seniorId], references: [id], onDelete: Cascade)
+  caregiver   CaregiverProfile @relation(fields: [caregiverId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  dueDate     DateTime?
+  isCompleted Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([seniorId, isCompleted])
+}
+
+model Feedback {
+  id        String        @id @default(uuid())
+  sessionId String
+  session   GuidedSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  rating    String        // GOOD, POOR
+  comment   String?
+  createdAt DateTime      @default(now())
+
+  @@index([sessionId])
+}
+
+model Conversation {
+  id        String                @id @default(uuid())
+  seniorId  String
+  senior    SeniorProfile         @relation(fields: [seniorId], references: [id], onDelete: Cascade)
+  title     String?
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+
+  messages  ConversationMessage[]
+
+  @@index([seniorId])
+}
+
+model ConversationMessage {
+  id             String       @id @default(uuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         String       // SENIOR, AI
+  content        String
+  audioPlayed    Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
+}
+
+model BrowserSession {
+  id                String        @id @default(uuid())
+  seniorId          String
+  senior            SeniorProfile @relation(fields: [seniorId], references: [id], onDelete: Cascade)
+  domain            String
+  pageTitle         String?
+  helpRequested     String?
+  summaryGenerated  String?
+  createdAt         DateTime      @default(now())
+
+  @@index([seniorId])
+}
+
+model SecurityEvent {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventType String   // SCAM_CHECK, PAYMENT_WARNING, SENSITIVE_INPUT_BLOCKED
+  details   String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, eventType])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  resource  String
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}

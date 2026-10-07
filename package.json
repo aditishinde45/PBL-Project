@@ -1,0 +1,17 @@
+{
+  "name": "elderease-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ElderEase — An AI Companion for Safe and Independent Digital Living",
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "build:server": "npm --prefix server run build",
+    "build:client": "npm --prefix client run build",
+    "build": "npm run build:server && npm run build:client",
+    "seed": "npm --prefix server run prisma:seed",
+    "test:server": "npm --prefix server test",
+    "test:extension": "npm --prefix extension test",
+    "test": "npm run test:server && npm run test:extension"
+  }
+}
