@@ -156,8 +156,8 @@ ElderEase/
    npm run dev
    ```
    - **Frontend App**: `http://localhost:5173`
-   - **Backend API**: `http://localhost:5001`
-   - **API Health Check**: `http://localhost:5001/api/health`
+   - **Live Backend API**: `https://elderease-0h4i.onrender.com`
+   - **Live API Health Check**: `https://elderease-0h4i.onrender.com/api/health`
 
 ---
 

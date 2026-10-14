@@ -1,7 +1,7 @@
 // ElderEase Comprehensive Verification Test Script
 import assert from 'assert';
 
-const BASE_URL = 'http://localhost:5001/api';
+const BASE_URL = process.env.API_BASE_URL || 'https://elderease-0h4i.onrender.com/api';
 
 async function runTests() {
   console.log('🧪 Starting ElderEase Automated Verification Suite...\n');

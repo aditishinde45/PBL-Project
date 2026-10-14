@@ -1,6 +1,9 @@
 // Centralized API Client with senior-friendly error handling
 
-const API_BASE = '/api';
+const RAW_API_URL = import.meta.env.VITE_API_URL || 'https://elderease-0h4i.onrender.com';
+const API_BASE = RAW_API_URL.replace(/\/$/, '').endsWith('/api')
+  ? RAW_API_URL.replace(/\/$/, '')
+  : `${RAW_API_URL.replace(/\/$/, '')}/api`;
 
 export const apiClient = async (endpoint, options = {}) => {
   const token = localStorage.getItem('elderease_token');

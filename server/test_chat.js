@@ -1,10 +1,10 @@
 async function testChat() {
-  const loginRes = await fetch('http://localhost:5001/api/auth/demo/senior', { method: 'POST' });
+  const loginRes = await fetch('https://elderease-0h4i.onrender.com/api/auth/demo/senior', { method: 'POST' });
   const loginData = await loginRes.json();
   const token = loginData.token;
 
   console.log("Asking general question...");
-  const aiChatRes = await fetch('http://localhost:5001/api/ai/chat', {
+  const aiChatRes = await fetch('https://elderease-0h4i.onrender.com/api/ai/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
     body: JSON.stringify({ message: 'What is the capital of India?' })
@@ -13,7 +13,7 @@ async function testChat() {
   console.log("Response:", data);
 
   console.log("\nAsking tutorial question...");
-  const aiTutorialRes = await fetch('http://localhost:5001/api/ai/chat', {
+  const aiTutorialRes = await fetch('https://elderease-0h4i.onrender.com/api/ai/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
     body: JSON.stringify({ message: 'How to block a contact on whatsapp?' })
