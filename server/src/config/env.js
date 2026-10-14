@@ -24,7 +24,8 @@ dotenv.config({ override: false });
 let rawMongoUri = process.env.MONGODB_URL;
 console.log(
   '[MongoDB Debug] MONGODB_URL exists:',
-  Boolean(process.env.MONGODB_URL)
+  Boolean(process.env.MONGODB_URL),
+  rawMongoUri
 );
 console.log('[MongoDB Debug] NODE_ENV:', process.env.NODE_ENV);
 if (!rawMongoUri) {
