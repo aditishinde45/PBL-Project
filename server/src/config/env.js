@@ -22,7 +22,11 @@ dotenv.config({ override: false });
 
 // MongoDB configuration
 let rawMongoUri = process.env.MONGODB_URL;
-
+console.log(
+  '[MongoDB Debug] MONGODB_URL exists:',
+  Boolean(process.env.MONGODB_URL)
+);
+console.log('[MongoDB Debug] NODE_ENV:', process.env.NODE_ENV);
 if (!rawMongoUri) {
   if (process.env.NODE_ENV === 'production') {
     throw new Error(
