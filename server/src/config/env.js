@@ -10,14 +10,39 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env'), override: true });
 dotenv.config({ path: path.resolve(__dirname, '../../../.env'), override: false });
 dotenv.config({ override: false });
 
-let rawMongoUri = process.env.MONGO_URL || process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/elderease';
-if (rawMongoUri.includes('mongodb+srv://') && rawMongoUri.includes('.mongodb.net/?')) {
-  rawMongoUri = rawMongoUri.replace('.mongodb.net/?', '.mongodb.net/elderease?');
-} else if (rawMongoUri.includes('mongodb+srv://') && rawMongoUri.endsWith('.mongodb.net/')) {
+
+
+let rawMongoUri = process.env.MONGODB_URL;
+
+if (!rawMongoUri) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('MONGODB_URL is required in production');
+  }
+
+  rawMongoUri = 'mongodb://127.0.0.1:27017/elderease';
+}
+
+if (
+  rawMongoUri.startsWith('mongodb+srv://') &&
+  rawMongoUri.includes('.mongodb.net/?')
+) {
+  rawMongoUri = rawMongoUri.replace(
+    '.mongodb.net/?',
+    '.mongodb.net/elderease?'
+  );
+} else if (
+  rawMongoUri.startsWith('mongodb+srv://') &&
+  rawMongoUri.endsWith('.mongodb.net/')
+) {
   rawMongoUri += 'elderease';
-} else if (rawMongoUri.includes('mongodb+srv://') && rawMongoUri.endsWith('.mongodb.net')) {
+} else if (
+  rawMongoUri.startsWith('mongodb+srv://') &&
+  rawMongoUri.endsWith('.mongodb.net')
+) {
   rawMongoUri += '/elderease';
 }
+
+
 
 export const config = {
   port: process.env.PORT || 5001,
