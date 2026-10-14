@@ -201,4 +201,4 @@ Developed as a **Project-Based Learning (PBL)** initiative dedicated to human-ce
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).# mern-frontend
